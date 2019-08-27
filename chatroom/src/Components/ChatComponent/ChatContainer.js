@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
+import ChatRoom from './ChatRoom';
 
-
-const ChatContainer = () =>{
+const ChatContainer = () => {
 
 const ChatDiv = styled.div`
     width: 100%;
@@ -12,10 +12,9 @@ const ChatDiv = styled.div`
     padding-top: 10px;
     `;
 
-    
 return (
 <ChatDiv>
-    I am a Chat Room 
+    <ChatRoom></ChatRoom>
 </ChatDiv>
 )
 };

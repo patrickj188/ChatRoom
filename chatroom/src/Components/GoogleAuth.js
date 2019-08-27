@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import {signIn, signOut } from "../actions";
 import { firebase, database, googleAuthProvider as provider } from '../firebase';
 
-
 class GoogleAuth extends React.Component {
 
     componentDidMount() {
@@ -25,18 +24,10 @@ class GoogleAuth extends React.Component {
             .auth()
             .signInWithPopup(provider)
             .then(async result => {
-                this.readTestData();
+
             })
             .catch(err => {
                 console.error('sign in error', err);
-            })
-    }
-
-    readTestData = () => {
-        firebase.firestore().collection('test').get()
-            .then(snapshot => {
-                const values =  snapshot.docs.map(doc => doc.data());
-                console.log(values)
             })
     }
 
