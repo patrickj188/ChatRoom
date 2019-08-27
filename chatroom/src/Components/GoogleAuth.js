@@ -5,7 +5,6 @@ import { firebase, database, googleAuthProvider as provider } from '../firebase'
 
 
 class GoogleAuth extends React.Component {
-
     componentDidMount() {
         // window.gapi.load('client:auth2', () => {
         //     window.gapi.client.init({
@@ -17,45 +16,46 @@ class GoogleAuth extends React.Component {
         //         this.auth.isSignedIn.listen(this.onAuthChange);
         //     });
         // });
+    }
 
+    onAuthChange(isSignedIn) {
+        if (isSignedIn) {
+            this.props.signIn(this.auth.currentUser.get().getId());
+        } else {
+            this.props.signOut();
+        };
+    }
+
+    onSignInClick() {
         provider.addScope('profile')
         provider.addScope('email')
         firebase
             .auth()
             .signInWithPopup(provider)
-            .then(result => {
+            .then(async result => {
                 const token = result.credential.accessToken;
-                // The signed-in user info.
                 const user = result.user;
                 console.log(token, user);
             })
             .catch(err => {
                 console.error('sign in error', err);
             })
-
     }
 
-    onAuthChange = (isSignedIn) => {
-       if(isSignedIn) {
-           this.props.signIn(this.auth.currentUser.get().getId());
-         }else {
-             this.props.signOut();
-         };
+    readTestData() {
+        firebase.firestore().collection('test').get()
+            .then(snapshot => {
+                const values =  snapshot.docs.map(doc => doc.data());
+                console.log(values)
+            })
     }
 
-    onSignInClick =()=>{
-        this.auth.signIn();
-
-    }
-    onSignOutClick = () =>{
-        this.auth.signOut();
-
+    onSignOutClick() {
+        firebase.auth().signOut();
     }
 
     renderAuthButton() {
-        if (this.props.isSignedIn == null) {
-            return null;
-        } else if (this.props.isSignedIn) {
+        if (this.props.isSignedIn) {
             return (
                 <button onClick={this.onSignOutClick} className="ui red google button">
                 <i className="google icon" />
@@ -64,7 +64,7 @@ class GoogleAuth extends React.Component {
             )
         } else {
             return (
-                <button onClick={this.onSignInClick} className="ui red google button">
+                <button onClick={this.onSignInClick} className="ui blue google button">
                 <i className="google icon" />
                 Sign In with Google
                 </button>
