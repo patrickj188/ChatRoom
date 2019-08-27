@@ -5,44 +5,34 @@ import { firebase, database, googleAuthProvider as provider } from '../firebase'
 
 
 class GoogleAuth extends React.Component {
+
     componentDidMount() {
-        // window.gapi.load('client:auth2', () => {
-        //     window.gapi.client.init({
-        //         clientId: process.env.REACT_APP_GOOGLE_CLIENT_ID,
-        //         scope: 'email'
-        //     }).then(() => {
-        //         this.auth = window.gapi.auth2.getAuthInstance();
-        //         this.onAuthChange(this.auth.isSignedIn.get());
-        //         this.auth.isSignedIn.listen(this.onAuthChange);
-        //     });
-        // });
+        firebase.auth().onAuthStateChanged(this.onAuthChange);
     }
 
-    onAuthChange(isSignedIn) {
-        if (isSignedIn) {
-            this.props.signIn(this.auth.currentUser.get().getId());
+    onAuthChange = (user) => {
+        if (user) {
+            this.props.signIn(user.uid);
         } else {
             this.props.signOut();
         };
     }
 
-    onSignInClick() {
+    onSignInClick = () => {
         provider.addScope('profile')
         provider.addScope('email')
         firebase
             .auth()
             .signInWithPopup(provider)
             .then(async result => {
-                const token = result.credential.accessToken;
-                const user = result.user;
-                console.log(token, user);
+                this.readTestData();
             })
             .catch(err => {
                 console.error('sign in error', err);
             })
     }
 
-    readTestData() {
+    readTestData = () => {
         firebase.firestore().collection('test').get()
             .then(snapshot => {
                 const values =  snapshot.docs.map(doc => doc.data());
@@ -50,8 +40,9 @@ class GoogleAuth extends React.Component {
             })
     }
 
-    onSignOutClick() {
+    onSignOutClick = () => {
         firebase.auth().signOut();
+        this.props.signOut()
     }
 
     renderAuthButton() {
