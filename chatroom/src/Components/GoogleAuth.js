@@ -1,25 +1,41 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {signIn, signOut } from "../actions";
+import { firebase, database, googleAuthProvider as provider } from '../firebase';
 
 
 class GoogleAuth extends React.Component {
 
     componentDidMount() {
-        window.gapi.load('client:auth2', () => {
-            window.gapi.client.init({
-                clientId: process.env.REACT_APP_GOOGLE_CLIENT_ID,
-                scope: 'email'
-            }).then(() => {
-                this.auth = window.gapi.auth2.getAuthInstance();
-                this.onAuthChange(this.auth.isSignedIn.get());
-                this.auth.isSignedIn.listen(this.onAuthChange);
-            });
-        });
+        // window.gapi.load('client:auth2', () => {
+        //     window.gapi.client.init({
+        //         clientId: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+        //         scope: 'email'
+        //     }).then(() => {
+        //         this.auth = window.gapi.auth2.getAuthInstance();
+        //         this.onAuthChange(this.auth.isSignedIn.get());
+        //         this.auth.isSignedIn.listen(this.onAuthChange);
+        //     });
+        // });
+
+        provider.addScope('profile')
+        provider.addScope('email')
+        firebase
+            .auth()
+            .signInWithPopup(provider)
+            .then(result => {
+                const token = result.credential.accessToken;
+                // The signed-in user info.
+                const user = result.user;
+                console.log(token, user);
+            })
+            .catch(err => {
+                console.error('sign in error', err);
+            })
 
     }
 
-    onAuthChange = (isSignedIn) =>{
+    onAuthChange = (isSignedIn) => {
        if(isSignedIn) {
            this.props.signIn(this.auth.currentUser.get().getId());
          }else {
@@ -37,7 +53,7 @@ class GoogleAuth extends React.Component {
     }
 
     renderAuthButton() {
-        if (this.props.isSignedIn === null) {
+        if (this.props.isSignedIn == null) {
             return null;
         } else if (this.props.isSignedIn) {
             return (
