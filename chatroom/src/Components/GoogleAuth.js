@@ -5,13 +5,17 @@ import { firebase, database, googleAuthProvider as provider } from '../firebase'
 
 class GoogleAuth extends React.Component {
 
+state= {
+    displayName: ""
+}
+
     componentDidMount() {
         firebase.auth().onAuthStateChanged(this.onAuthChange);
     }
 
     onAuthChange = (user) => {
         if (user) {
-            this.props.signIn(user.uid);
+            this.props.signIn(user.uid, user.displayName);
         } else {
             this.props.signOut();
         };
@@ -24,6 +28,7 @@ class GoogleAuth extends React.Component {
             .auth()
             .signInWithPopup(provider)
             .then(async result => {
+                this.setState({displayName: result.user.displayName})
 
             })
             .catch(err => {

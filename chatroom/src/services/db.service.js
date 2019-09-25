@@ -16,9 +16,9 @@ class DBService {
     }
   }
 
-  async writeToTestCollection(message) {
+  async writeToCollection(collection, message, user, dateTime) {
     try {
-      const snapshot = await firebase.firestore().collection('test').add({ foo: message })
+      const snapshot = await firebase.firestore().collection(collection).add({ message, user, dateTime })
       return snapshot;
     } catch (err) {
       throw err;
