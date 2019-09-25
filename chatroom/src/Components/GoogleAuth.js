@@ -1,13 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {signIn, signOut } from "../actions";
-import { firebase, database, googleAuthProvider as provider } from '../firebase';
+import { firebase, googleAuthProvider as provider } from '../firebase';
 
 class GoogleAuth extends React.Component {
-
-state= {
-    displayName: ""
-}
 
     componentDidMount() {
         firebase.auth().onAuthStateChanged(this.onAuthChange);

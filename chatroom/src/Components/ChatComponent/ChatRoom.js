@@ -33,9 +33,13 @@ class ChatRoom extends React.Component {
   fetchData = () => {
     db.readCollection("messages")
       .then(data => {
-        this.setState({ messages: data })
+        this.setState({ messages: data.sort(orderByDate) })
       })
       .catch(err => console.error(err))
+
+    function orderByDate(a, b) {
+      return a.dateTime - b.dateTime;
+    }
   }
 
   componentDidMount() {
@@ -44,9 +48,7 @@ class ChatRoom extends React.Component {
 
   onSubmit = () => {
     // write state message to db
-    console.log(this.state.message)
     db.writeToCollection("messages", this.state.message, this.props.displayName, Date.now() ).then(result => {
-      console.log('done', result)
       this.fetchData();
     }).catch(err => {
       console.error('whooops', err)
@@ -66,7 +68,6 @@ class ChatRoom extends React.Component {
       return <p key={i}>{x.message} | {x.user}</p>
     })
 
-    console.log(this.props.displayName)
     return (
       <div>
       <ChatRoomWrapper>
