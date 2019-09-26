@@ -5,19 +5,28 @@ import { connect } from 'react-redux';
 import {signIn } from "../../actions";
 
 const ChatRoomTextDiv = styled.div`
-border: 1px solid black;
-width: 30%;
-height: 300px;
-margin: 0 auto;
-margin-bottom: 10px;
-overflow: scroll;
+  width: 100%;
+  height: 700px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  overflow: scroll;
+  /* padding: 0 50px; */
 `;
 
 const ChatRoomWrapper = styled.div`
-width: 100%;
-height: 60%;
-display: block;
-justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Text = styled.p`
+  width: 100%;
+
+  span.message-author {
+    opacity: 0.5;
+    font-size: 0.8em;
+  }
 `;
 
 class ChatRoom extends React.Component {
@@ -66,15 +75,15 @@ class ChatRoom extends React.Component {
   }
 
   render() {
-    const renderTest = this.state.messages.map((x, i) => {
-      return <p key={i}>{x.message} | {x.user}</p>
+    const renderText = this.state.messages.map((x, i) => {
+      return <Text key={i}>{x.message} <span className="message-author">{x.user}</span></Text>
     })
 
     return (
       <div>
-      <ChatRoomWrapper>
-        <ChatRoomTextDiv>
-          {renderTest}
+      <ChatRoomWrapper className="chatroom-wrapper">
+        <ChatRoomTextDiv className="chatroom-text">
+          {renderText}
         </ChatRoomTextDiv>
 
         <input placeholder="say something" onKeyUp={this.onKeyUp} />

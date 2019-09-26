@@ -3,19 +3,20 @@ import styled from 'styled-components';
 
 const Footer = () => {
 
-const Footer = styled.div` 
+const Footer = styled.footer` 
     width: 100%;
-    height: 20vh;
-    background-color: lightblue;
-    text-align: center;
-    margin-top: 60px;
-    position: relative;
+    position: absolute;
     bottom: 0;
-
+    left: 0;
+    height: 40px;
+    background: #e5e5e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `;
     
     return (
-    <Footer>I am a Footer</Footer>
+    <Footer></Footer>
     )
 };
 
