@@ -25,42 +25,44 @@ class ChatRoom extends React.Component {
     super(props);
     this.state = {
       messages: [],
-      message: '',
+      currentMessage: '',
     }
+  }
+
+  async componentDidMount() {
+    this.fetchData();
+    db.listenForMessages(this.onNewMessage)
   }
 
 
   fetchData = () => {
     db.readCollection("messages")
       .then(data => {
-        this.setState({ messages: data.sort(orderByDate) })
+        this.setState({ messages: data })
       })
       .catch(err => console.error(err))
-
-    function orderByDate(a, b) {
-      return a.dateTime - b.dateTime;
-    }
   }
-
-  componentDidMount() {
-    this.fetchData();
+  
+  onNewMessage = (message) => {
+    if (!message) return;
+    this.setState({ messages: this.state.messages.concat([message]) })
   }
 
   onSubmit = () => {
     // write state message to db
-    db.writeToCollection("messages", this.state.message, this.props.displayName, Date.now() ).then(result => {
-      this.fetchData();
+    db.writeToCollection("messages", this.state.currentMessage, this.props.displayName, Date.now() ).then(result => {
+
     }).catch(err => {
       console.error('whooops', err)
     })
   }
 
-  onChange = (event) => {
+  onKeyUp = (event) => {
     if (event.key === 'Enter') {
       this.onSubmit();
       return event.target.value = ''
     }
-    this.setState({ message: event.target.value })
+    this.setState({ currentMessage: event.target.value })
   }
 
   render() {
@@ -75,7 +77,7 @@ class ChatRoom extends React.Component {
           {renderTest}
         </ChatRoomTextDiv>
 
-        <input placeholder="say something" onKeyUp={this.onChange} />
+        <input placeholder="say something" onKeyUp={this.onKeyUp} />
       </ChatRoomWrapper>
       </div>
     )
