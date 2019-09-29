@@ -4,24 +4,40 @@ import db from '../../services/db.service'
 import { connect } from 'react-redux';
 import {signIn } from "../../actions";
 
+const chatScrollContainerId = 'chat-scroll-container';
+
 const ChatRoomTextDiv = styled.div`
   width: 100%;
-  height: 700px;
   margin: 0 auto;
-  margin-bottom: 20px;
-  overflow: scroll;
-  /* padding: 0 50px; */
+  overflow-y: scroll;
+  padding-bottom: 50px;
 `;
 
 const ChatRoomWrapper = styled.div`
+  height: calc(100vh - 40px - 60px);
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+
+  input {
+    width: 90%;
+    margin: 20px auto;
+    padding: 10px;
+    font-size: 1.2em;
+  }
 `;
 
 const Text = styled.p`
   width: 100%;
+  text-align: left;
+  padding: 10px 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  &.my-message {
+    text-align: right;
+  }
 
   span.message-author {
     opacity: 0.5;
@@ -39,22 +55,35 @@ class ChatRoom extends React.Component {
   }
 
   async componentDidMount() {
-    this.fetchData();
-    db.listenForMessages(this.onNewMessage)
+    try {
+      await this.fetchData();
+      this.scrollToBottom();
+      db.listenForMessages(this.onNewMessage)
+    } catch (err) {
+      console.log(err);
+    }
+    
+  }
+
+  scrollToBottom() {
+    const chatContainer = document.getElementById(chatScrollContainerId);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
   }
 
 
   fetchData = () => {
-    db.readCollection("messages")
-      .then(data => {
-        this.setState({ messages: data })
-      })
-      .catch(err => console.error(err))
+    return new Promise((resolve, reject) => {
+      db.readCollection("messages")
+        .then(data => {
+          this.setState({ messages: data }, () => resolve())
+        })
+        .catch(err => reject(err));
+    })
   }
   
   onNewMessage = (message) => {
     if (!message) return;
-    this.setState({ messages: this.state.messages.concat([message]) })
+    this.setState({ messages: this.state.messages.concat([message]) }, this.scrollToBottom)
   }
 
   onSubmit = () => {
@@ -66,6 +95,10 @@ class ChatRoom extends React.Component {
     })
   }
 
+  isMyMessage(message) {
+    return message.user === this.props.displayName;
+  }
+
   onKeyUp = (event) => {
     if (event.key === 'Enter') {
       this.onSubmit();
@@ -74,15 +107,18 @@ class ChatRoom extends React.Component {
     this.setState({ currentMessage: event.target.value })
   }
 
-  render() {
+  render()  {
     const renderText = this.state.messages.map((x, i) => {
-      return <Text key={i}>{x.message} <span className="message-author">{x.user}</span></Text>
+      return <Text key={i} className={this.isMyMessage(x) ? 'my-message' : ''}>
+        <span className="message-author">{x.user}</span>
+        {x.message}
+      </Text>
     })
 
     return (
       <div>
       <ChatRoomWrapper className="chatroom-wrapper">
-        <ChatRoomTextDiv className="chatroom-text">
+        <ChatRoomTextDiv id={chatScrollContainerId} className="chatroom-text">
           {renderText}
         </ChatRoomTextDiv>
 
