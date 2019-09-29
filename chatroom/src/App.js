@@ -1,10 +1,11 @@
 import React from 'react';
 import NavBar from "./Components/nav/NavBar";
 import Footer from './Components/footer/Footer'
-import ChatContainer from './Components/ChatComponent/ChatContainer';
 import styled from 'styled-components';
+import ChatRoom from './Components/ChatComponent/ChatRoom';
 
 const footerHeight = '40px';
+const navHeight = '60px';
 
 const AppStyle = styled.main`
     min-height: 100%;
@@ -18,8 +19,8 @@ const AppStyle = styled.main`
 
 const App = () => {
     return <AppStyle>
-        <NavBar />
-        <ChatContainer />
+        <NavBar navHeight={navHeight}/>
+        <ChatRoom navHeight={navHeight} footerHeight={footerHeight}/>
         <Footer footerHeight={footerHeight} />
     </AppStyle>
 }

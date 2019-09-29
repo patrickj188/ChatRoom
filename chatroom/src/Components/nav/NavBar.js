@@ -2,28 +2,25 @@ import React from "react";
 import styled from 'styled-components'
 import GoogleAuth from '../GoogleAuth'
 
+const NavBar = (props) => {
+    const Wrapper = styled.header` 
+        width: 100%;
+        height: ${props.navHeight};
+        background-color: lightblue;
+        margin: 0 auto;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        > * {
+            padding: 10px 20px;
+        }
+    `;
 
-
-const Wrapper = styled.div` 
-    width: 100%;
-    height: 60px;
-    background-color: lightblue;
-    margin: 0 auto;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    > * {
-        padding: 10px 20px;
-    }
-`;
-
-
-const NavBar = () =>{
-    return <Wrapper>
-        <div>
+    return (
+        <Wrapper>
             <GoogleAuth />
-        </div>
-    </Wrapper>
+        </Wrapper>
+    );
 }
 
 export default NavBar;
