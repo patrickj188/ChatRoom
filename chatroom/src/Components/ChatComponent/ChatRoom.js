@@ -6,15 +6,7 @@ import {signIn } from "../../actions";
 
 const chatScrollContainerId = 'chat-scroll-container';
 
-const ChatRoomTextDiv = styled.div`
-  width: 100%;
-  margin: 0 auto;
-  overflow-y: scroll;
-  padding-bottom: 50px;
-`;
-
 const ChatRoomWrapper = styled.div`
-  height: calc(100vh - 40px - 60px);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -25,6 +17,13 @@ const ChatRoomWrapper = styled.div`
     padding: 10px;
     font-size: 1.2em;
   }
+`;
+
+const ChatRoomTextDiv = styled.div`
+  width: 100%;
+  margin: 0 auto;
+  overflow-y: scroll;
+  padding-bottom: 50px;
 `;
 
 const Text = styled.p`
@@ -117,7 +116,7 @@ class ChatRoom extends React.Component {
 
     return (
       <div>
-      <ChatRoomWrapper className="chatroom-wrapper">
+      <ChatRoomWrapper className="chatroom-wrapper" style={{ height: `calc(100vh - ${this.props.navHeight} - ${this.props.footerHeight})`}}>
         <ChatRoomTextDiv id={chatScrollContainerId} className="chatroom-text">
           {renderText}
         </ChatRoomTextDiv>
