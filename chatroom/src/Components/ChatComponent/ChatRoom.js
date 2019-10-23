@@ -43,13 +43,20 @@ const Text = styled.p`
     font-size: 0.8em;
   }
 `;
+const NotSignedIn = styled.div`
+  width: 100%;
+  display: block;
+  padding-bottom: 50px;
+   font-size: 30px;
+   justify-content: center;
+`;
 
 class ChatRoom extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       messages: [],
-      currentMessage: '',
+      currentMessage: ''
     }
   }
 
@@ -107,6 +114,7 @@ class ChatRoom extends React.Component {
   }
 
   render()  {
+
     const renderText = this.state.messages.map((x, i) => {
       return <Text key={i} className={this.isMyMessage(x) ? 'my-message' : ''}>
         <span className="message-author">{x.user}</span>
@@ -114,7 +122,16 @@ class ChatRoom extends React.Component {
       </Text>
     })
 
+
+if(this.props.isSignedIn !== true){
+  return (<div>
+    <ChatRoomWrapper>
+      <NotSignedIn>Please Sign in</NotSignedIn>
+    </ChatRoomWrapper>
+  </div>)
+}else{
     return (
+
       <div>
       <ChatRoomWrapper className="chatroom-wrapper" style={{ height: `calc(100vh - ${this.props.navHeight} - ${this.props.footerHeight})`}}>
         <ChatRoomTextDiv id={chatScrollContainerId} className="chatroom-text">
@@ -127,9 +144,10 @@ class ChatRoom extends React.Component {
     )
   }
 }
+}
 
 const mapStateToProps = (state) =>{
-  return { userId: state.auth.userId, displayName: state.auth.displayName}
+  return { userId: state.auth.userId, displayName: state.auth.displayName, isSignedIn: state.auth.isSignedIn}
 }
 
 export default connect(mapStateToProps, {signIn})(ChatRoom);
