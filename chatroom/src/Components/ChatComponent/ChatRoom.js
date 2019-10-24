@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import db from '../../services/db.service'
+import db from '../../services/db.service';
 import { connect } from 'react-redux';
-import {signIn } from "../../actions";
+import { signIn } from "../../actions";
 
 const chatScrollContainerId = 'chat-scroll-container';
 
@@ -57,14 +57,14 @@ class ChatRoom extends React.Component {
     this.state = {
       messages: [],
       currentMessage: ''
-    }
+    };
   }
 
   async componentDidMount() {
     try {
       await this.fetchData();
       this.scrollToBottom();
-      db.listenForMessages(this.onNewMessage)
+      db.listenForMessages(this.onNewMessage);
     } catch (err) {
       console.log(err);
     }
@@ -81,15 +81,16 @@ class ChatRoom extends React.Component {
     return new Promise((resolve, reject) => {
       db.readCollection("messages")
         .then(data => {
-          this.setState({ messages: data }, () => resolve())
+          this.setState({ messages: data }, () => resolve());
         })
         .catch(err => reject(err));
-    })
+    });
   }
   
   onNewMessage = (message) => {
     if (!message) return;
-    this.setState({ messages: this.state.messages.concat([message]) }, this.scrollToBottom)
+    this.setState({ messages: this.state.messages.concat([message]) }, this.scrollToBottom);
+    
   }
 
   onSubmit = () => {
@@ -97,8 +98,8 @@ class ChatRoom extends React.Component {
     db.writeToCollection("messages", this.state.currentMessage, this.props.displayName, Date.now() ).then(result => {
 
     }).catch(err => {
-      console.error('whooops', err)
-    })
+      console.error('whooops', err);
+    });
   }
 
   isMyMessage(message) {
@@ -108,9 +109,9 @@ class ChatRoom extends React.Component {
   onKeyUp = (event) => {
     if (event.key === 'Enter') {
       this.onSubmit();
-      return event.target.value = ''
+      return event.target.value = '';
     }
-    this.setState({ currentMessage: event.target.value })
+    this.setState({ currentMessage: event.target.value });
   }
 
   render()  {
@@ -119,8 +120,8 @@ class ChatRoom extends React.Component {
       return <Text key={i} className={this.isMyMessage(x) ? 'my-message' : ''}>
         <span className="message-author">{x.user}</span>
         {x.message}
-      </Text>
-    })
+      </Text>;
+    });
 
 
 if(this.props.isSignedIn !== true){
@@ -128,7 +129,7 @@ if(this.props.isSignedIn !== true){
     <ChatRoomWrapper>
       <NotSignedIn>Please Sign in</NotSignedIn>
     </ChatRoomWrapper>
-  </div>)
+  </div>);
 }else{
     return (
 
@@ -141,14 +142,14 @@ if(this.props.isSignedIn !== true){
         <input placeholder="say something" onKeyUp={this.onKeyUp} />
       </ChatRoomWrapper>
       </div>
-    )
+    );
   }
 }
 }
 
-const mapStateToProps = (state) =>{
-  return { userId: state.auth.userId, displayName: state.auth.displayName, isSignedIn: state.auth.isSignedIn}
-}
+const mapStateToProps = (state) => {
+  return { userId: state.auth.userId, displayName: state.auth.displayName, isSignedIn: state.auth.isSignedIn};
+};
 
-export default connect(mapStateToProps, {signIn})(ChatRoom);
+export default connect(mapStateToProps, { signIn })(ChatRoom);
 

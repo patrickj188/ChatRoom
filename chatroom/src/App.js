@@ -1,6 +1,6 @@
 import React from 'react';
 import NavBar from "./Components/nav/NavBar";
-import Footer from './Components/footer/Footer'
+import Footer from './Components/footer/Footer';
 import styled from 'styled-components';
 import ChatRoom from './Components/ChatComponent/ChatRoom';
 
@@ -22,7 +22,7 @@ const App = () => {
         <NavBar navHeight={navHeight}/>
         <ChatRoom navHeight={navHeight} footerHeight={footerHeight}/>
         <Footer footerHeight={footerHeight} />
-    </AppStyle>
-}
+    </AppStyle>;
+};
 
 export default App;

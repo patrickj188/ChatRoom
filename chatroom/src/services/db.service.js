@@ -1,4 +1,4 @@
-import { firebase } from '../firebase'
+import { firebase } from '../firebase';
 
 class DBService {
   constructor() {
@@ -20,14 +20,14 @@ class DBService {
       const values = snapshot.docs.map(doc => doc.data());
       return values;
     } catch (err) {
-      console.error(err)
-      throw(err)
+      console.error(err);
+      throw(err);
     }
   }
 
   async writeToCollection(collection, message, user, dateTime) {
     try {
-      const snapshot = await firebase.firestore().collection(collection).add({ message, user, dateTime })
+      const snapshot = await firebase.firestore().collection(collection).add({ message, user, dateTime });
       return snapshot;
     } catch (err) {
       throw err;
@@ -35,12 +35,12 @@ class DBService {
   }
 
   listenForMessages(callback) {
-    const query = firebase.firestore().collection('messages').orderBy('dateTime').startAt(Date.now())
+    const query = firebase.firestore().collection('messages').orderBy('dateTime').startAt(Date.now());
     query.onSnapshot(snap => {
       const changes = snap.docChanges();
       if (changes.length === 0 || changes[0].type !== 'added') return null; // this may need to change as we add features
-      return callback(changes[0].doc.data())
-    })
+      return callback(changes[0].doc.data());
+    });
   }
 }
 

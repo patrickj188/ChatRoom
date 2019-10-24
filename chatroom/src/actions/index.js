@@ -1,7 +1,7 @@
 import {
     SIGN_IN,
     SIGN_OUT,
-} from './types'
+} from './types';
 
 
 export const signIn = (userId, displayName, isSignedIn) => {
@@ -20,4 +20,3 @@ export const signOut = () => {
         type: SIGN_OUT
     };
 };
-

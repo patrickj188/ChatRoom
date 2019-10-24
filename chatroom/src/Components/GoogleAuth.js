@@ -18,23 +18,23 @@ class GoogleAuth extends React.Component {
     }
 
     onSignInClick = () => {
-        provider.addScope('profile')
-        provider.addScope('email')
+        provider.addScope('profile');
+        provider.addScope('email');
         firebase
             .auth()
             .signInWithPopup(provider)
             .then(async result => {
-                this.setState({displayName: result.user.displayName})
+                this.setState({displayName: result.user.displayName});
 
             })
             .catch(err => {
                 console.error('sign in error', err);
-            })
+            });
     }
 
     onSignOutClick = () => {
         firebase.auth().signOut();
-        this.props.signOut()
+        this.props.signOut();
     }
 
     renderAuthButton() {
@@ -44,14 +44,14 @@ class GoogleAuth extends React.Component {
                 <i className="google icon" />
                 Sign Out
                 </button>
-            )
+            );
         } else {
             return (
                 <button onClick={this.onSignInClick} className="ui blue google button">
                 <i className="google icon" />
                 Sign In with Google
                 </button>
-            )
+            );
         }
     }
 
@@ -60,13 +60,13 @@ class GoogleAuth extends React.Component {
             <div>
                {this.renderAuthButton()}
             </div>
-        )
+        );
     }
 
 };
 
 const mapStateToProps = (state) =>{
-    return { isSignedIn: state.auth.isSignedIn }
-}
+    return { isSignedIn: state.auth.isSignedIn };
+};
 
 export default connect(mapStateToProps, {signIn, signOut})(GoogleAuth);
