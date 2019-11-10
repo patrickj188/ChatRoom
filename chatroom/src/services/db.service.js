@@ -3,6 +3,8 @@ import { firebase } from '../firebase';
 class DBService {
   constructor() {
     this.limit = 100;
+    this.usersRef = firebase.firestore().collection('users')
+    this.roomRef = firebase.firestore().collection('rooms')
   }
 
   async readTestData() {
@@ -21,7 +23,7 @@ class DBService {
       return values;
     } catch (err) {
       console.error(err);
-      throw(err);
+      throw (err);
     }
   }
 
@@ -42,6 +44,34 @@ class DBService {
       return callback(changes[0].doc.data());
     });
   }
+
+
+  async loginUser(userData = {}) {
+    try {
+      await this.usersRef.doc(userData.uid).set({
+        display_name: userData.displayName,
+        user_id: userData.uid,
+        // full_name: userData.fullName
+      }, { merge: true })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async getUser(userId) {
+    try {
+      const user = await this.usersRef.doc(userId).get()
+      const rooms = await this.usersRef.doc(userId).collection('rooms').get()
+      return {
+        user: user.data(),
+        rooms: rooms.docs.map(x => x.data())
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
 }
 
 export default new DBService();

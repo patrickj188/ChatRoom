@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {signIn, signOut } from "../actions";
+import { signIn, signOut } from "../actions";
 import { firebase, googleAuthProvider as provider } from '../firebase';
+import db from '../services/db.service';
 
 class GoogleAuth extends React.Component {
 
@@ -11,7 +12,10 @@ class GoogleAuth extends React.Component {
 
     onAuthChange = (user) => {
         if (user) {
-            this.props.signIn(user.uid, user.displayName);
+            db.getUser(user.uid).then(data => {
+                console.log(data)
+                this.props.signIn(user.uid, user.displayName, true, data.rooms);
+            })
         } else {
             this.props.signOut();
         };
@@ -24,7 +28,8 @@ class GoogleAuth extends React.Component {
             .auth()
             .signInWithPopup(provider)
             .then(async result => {
-                this.setState({displayName: result.user.displayName});
+                this.setState({ displayName: result.user.displayName });
+                db.loginUser(result.user)
 
             })
             .catch(err => {
@@ -41,15 +46,15 @@ class GoogleAuth extends React.Component {
         if (this.props.isSignedIn) {
             return (
                 <button onClick={this.onSignOutClick} className="ui red google button">
-                <i className="google icon" />
-                Sign Out
+                    <i className="google icon" />
+                    Sign Out
                 </button>
             );
         } else {
             return (
                 <button onClick={this.onSignInClick} className="ui blue google button">
-                <i className="google icon" />
-                Sign In with Google
+                    <i className="google icon" />
+                    Sign In with Google
                 </button>
             );
         }
@@ -58,15 +63,15 @@ class GoogleAuth extends React.Component {
     render() {
         return (
             <div>
-               {this.renderAuthButton()}
+                {this.renderAuthButton()}
             </div>
         );
     }
 
 };
 
-const mapStateToProps = (state) =>{
+const mapStateToProps = (state) => {
     return { isSignedIn: state.auth.isSignedIn };
 };
 
-export default connect(mapStateToProps, {signIn, signOut})(GoogleAuth);
+export default connect(mapStateToProps, { signIn, signOut })(GoogleAuth);

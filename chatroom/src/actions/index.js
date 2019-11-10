@@ -4,13 +4,14 @@ import {
 } from './types';
 
 
-export const signIn = (userId, displayName, isSignedIn) => {
+export const signIn = (userId, displayName, isSignedIn, rooms) => {
     return {
         type: SIGN_IN,
         payload: {
             userId,
             displayName,
-            isSignedIn
+            isSignedIn,
+            rooms
         }
     };
 };

@@ -3,6 +3,7 @@ import NavBar from "./Components/nav/NavBar";
 import Footer from './Components/footer/Footer';
 import styled from 'styled-components';
 import ChatRoom from './Components/ChatComponent/ChatRoom';
+import SideBar from "./Components/sideBar/SideBar";
 
 const footerHeight = '40px';
 const navHeight = '60px';
@@ -21,6 +22,7 @@ const App = () => {
     return <AppStyle>
         <NavBar navHeight={navHeight}/>
         <ChatRoom navHeight={navHeight} footerHeight={footerHeight}/>
+        <SideBar />
         <Footer footerHeight={footerHeight} />
     </AppStyle>;
 };
