@@ -7,10 +7,6 @@ class DBService {
     this.roomRef = firebase.firestore().collection('rooms')
   }
 
-  async readTestData() {
-    return await this.readCollection('test');
-  }
-
   async readCollection(collectionName) {
     try {
       const snapshot = await firebase
@@ -58,6 +54,31 @@ class DBService {
     }
   }
 
+  async createRoom(roomName, userData) {
+    try {
+      const newRoom = this.roomRef.doc();
+      const userRef = this.usersRef.doc(userData.userId);
+      if (!userRef) return console.log('shit')
+      await newRoom.set({
+        name: roomName,
+        room_id: newRoom.id,
+      });
+      await newRoom.collection('users').add({
+        user_id: userData.userId,
+        display_name: userData.displayName,
+      })
+      await newRoom.collection('messages').add({ text: 'Welcome to your new room!', datetime: Date.now() });
+      await userRef.collection('rooms').add({ 
+        name: roomName,
+        room_id: newRoom.id,
+      })
+      return await newRoom.get();
+      // return room.data();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   async getUser(userId) {
     try {
       const userRef = await this.usersRef.doc(userId);
@@ -65,7 +86,7 @@ class DBService {
       const user = await userRef.get();
       return {
         user: user.data(),
-        rooms: rooms.docs.map(r => r.data())
+        rooms: rooms.docs.map(r => Object.assign({}, r.data(), { id: r.id }))
       }
     } catch (error) {
       console.log(error)
