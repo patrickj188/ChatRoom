@@ -73,7 +73,9 @@ class ChatRoom extends React.Component {
 
   scrollToBottom() {
     const chatContainer = document.getElementById(chatScrollContainerId);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+    if (chatContainer) {
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
   }
 
 

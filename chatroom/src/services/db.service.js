@@ -60,14 +60,16 @@ class DBService {
 
   async getUser(userId) {
     try {
-      const user = await this.usersRef.doc(userId).get()
-      const rooms = await this.usersRef.doc(userId).collection('rooms').get()
+      const userRef = await this.usersRef.doc(userId);
+      const rooms = await userRef.collection('rooms').get();
+      const user = await userRef.get();
       return {
         user: user.data(),
-        rooms: rooms.docs.map(x => x.data())
+        rooms: rooms.docs.map(r => r.data())
       }
     } catch (error) {
       console.log(error)
+      throw(error);
     }
   }
 
