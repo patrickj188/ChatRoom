@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import db from '../../services/db.service';
-import { createRoom } from '../../actions';
+import { createRoom, goToRoom } from '../../actions';
 
 const SideContainer = styled.div`
   width: 70px;
@@ -15,7 +15,7 @@ const SideContainer = styled.div`
 
 const SideBar = (props) => {
   const renderRoomNames = props.rooms.map(x => {
-    return <li key={x.room_id}>{x.name}</li>
+    return <li key={x.room_id} onClick={() => props.goToRoom(x.room_id)}>{x.name}</li>
   })
 
   return (
@@ -42,4 +42,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { createRoom })(SideBar);
+export default connect(mapStateToProps, { createRoom, goToRoom })(SideBar);

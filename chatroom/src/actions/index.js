@@ -2,6 +2,7 @@ import {
   SIGN_IN,
   SIGN_OUT,
   CREATE_ROOM,
+  GO_TO_ROOM,
 } from './types';
 
 
@@ -29,6 +30,16 @@ export const createRoom = (room) => {
     payload: {
       room_id: room.room_id, 
       name: room.name,
+    }
+  }
+}
+
+export const goToRoom = (roomId) => {
+  console.log('go to room', roomId)
+  return {
+    type: GO_TO_ROOM,
+    payload: {
+      roomId
     }
   }
 }

@@ -56,22 +56,22 @@ class ChatRoom extends React.Component {
     super(props);
     this.state = {
       messages: [],
-      currentMessage: ''
+      currentMessage: '',
+      room: {},
     };
   }
 
-  async componentDidMount() {
+  async componentDidMount () {
     try {
-      await this.fetchData();
-      this.scrollToBottom();
+      await this.fetchData(this.scrollToBottom);
       db.listenForMessages(this.onNewMessage);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
-    
+
   }
 
-  scrollToBottom() {
+  scrollToBottom () {
     const chatContainer = document.getElementById(chatScrollContainerId);
     if (chatContainer) {
       chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -79,32 +79,30 @@ class ChatRoom extends React.Component {
   }
 
 
-  fetchData = () => {
-    return new Promise((resolve, reject) => {
-      db.readCollection("messages")
-        .then(data => {
-          this.setState({ messages: data }, () => resolve());
-        })
-        .catch(err => reject(err));
-    });
+  fetchData = async (callback = () => {}) => {
+    try {
+      const { messages, room } = await db.getRoom(this.props.currentRoomId);
+      this.setState({ messages, room }, callback)
+    } catch (err) {
+      throw (err);
+    }
   }
-  
+
   onNewMessage = (message) => {
     if (!message) return;
     this.setState({ messages: this.state.messages.concat([message]) }, this.scrollToBottom);
-    
+
   }
 
   onSubmit = () => {
-    // write state message to db
-    db.writeToCollection("messages", this.state.currentMessage, this.props.displayName, Date.now() ).then(result => {
+    db.writeToCollection("messages", this.state.currentMessage, this.props.displayName, Date.now()).then(result => {
 
     }).catch(err => {
       console.error('whooops', err);
     });
   }
 
-  isMyMessage(message) {
+  isMyMessage (message) {
     return message.user === this.props.displayName;
   }
 
@@ -116,7 +114,7 @@ class ChatRoom extends React.Component {
     this.setState({ currentMessage: event.target.value });
   }
 
-  render()  {
+  render () {
 
     const renderText = this.state.messages.map((x, i) => {
       return <Text key={i} className={this.isMyMessage(x) ? 'my-message' : ''}>
@@ -125,32 +123,34 @@ class ChatRoom extends React.Component {
       </Text>;
     });
 
-
-if(this.props.isSignedIn !== true){
-  return (<div>
-    <ChatRoomWrapper>
-      <NotSignedIn>Please Sign in</NotSignedIn>
-    </ChatRoomWrapper>
-  </div>);
-}else{
-    return (
-
-      <div>
-      <ChatRoomWrapper className="chatroom-wrapper" style={{ height: `calc(100vh - ${this.props.navHeight} - ${this.props.footerHeight})`}}>
-        <ChatRoomTextDiv id={chatScrollContainerId} className="chatroom-text">
-          {renderText}
-        </ChatRoomTextDiv>
-
-        <input placeholder="say something" onKeyUp={this.onKeyUp} />
-      </ChatRoomWrapper>
-      </div>
-    );
+    if (this.props.isSignedIn !== true) {
+      return (<div>
+        <ChatRoomWrapper>
+          <NotSignedIn>Please Sign in</NotSignedIn>
+        </ChatRoomWrapper>
+      </div>);
+    } else {
+      return (
+        <div>
+          <ChatRoomWrapper className="chatroom-wrapper" style={{ height: `calc(100vh - ${this.props.navHeight} - ${this.props.footerHeight})` }}>
+            <ChatRoomTextDiv id={chatScrollContainerId} className="chatroom-text">
+              {renderText}
+            </ChatRoomTextDiv>
+            <input placeholder="say something" onKeyUp={this.onKeyUp} />
+          </ChatRoomWrapper>
+        </div>
+      );
+    }
   }
-}
 }
 
 const mapStateToProps = (state) => {
-  return { userId: state.auth.userId, displayName: state.auth.displayName, isSignedIn: state.auth.isSignedIn};
+  return {
+    userId: state.auth.userId,
+    displayName: state.auth.displayName,
+    isSignedIn: state.auth.isSignedIn,
+    currentRoomId: state.auth.currentRoomId,
+  };
 };
 
 export default connect(mapStateToProps, { signIn })(ChatRoom);

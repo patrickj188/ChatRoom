@@ -4,7 +4,7 @@ class DBService {
   constructor() {
     this.limit = 100;
     this.usersRef = firebase.firestore().collection('users')
-    this.roomRef = firebase.firestore().collection('rooms')
+    this.roomsRef = firebase.firestore().collection('rooms')
   }
 
   async readCollection(collectionName) {
@@ -56,7 +56,7 @@ class DBService {
 
   async createRoom(roomName, userData) {
     try {
-      const newRoom = this.roomRef.doc();
+      const newRoom = this.roomsRef.doc();
       const userRef = this.usersRef.doc(userData.userId);
       if (!userRef) return console.log('shit')
       await newRoom.set({
@@ -81,7 +81,7 @@ class DBService {
 
   async getUser(userId) {
     try {
-      const userRef = await this.usersRef.doc(userId);
+      const userRef = this.usersRef.doc(userId);
       const rooms = await userRef.collection('rooms').get();
       const user = await userRef.get();
       return {
@@ -91,6 +91,23 @@ class DBService {
     } catch (error) {
       console.log(error)
       throw(error);
+    }
+  }
+
+  async getRoom(roomId) {
+    try {
+      if (!roomId) return console.log('no roomid')
+      const roomRef = this.roomsRef.doc(roomId)
+      const messages = await roomRef.collection('messages').get();
+      const room = await roomRef.get();
+      if (!room) throw(new Error('no room with id ' + roomId));
+      return {
+        room: room.data(),
+        messages: messages.docs.map(m => Object.assign({}, m.data(), { id: m.id }))
+      }
+    } catch(err) {
+      console.error(err);
+      throw(err);
     }
   }
 

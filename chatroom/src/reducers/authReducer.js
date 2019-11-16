@@ -2,6 +2,7 @@ import {
   SIGN_IN,
   SIGN_OUT,
   CREATE_ROOM,
+  GO_TO_ROOM,
 } from '../actions/types';
 
 const INTIAL_STATE = {
@@ -9,6 +10,7 @@ const INTIAL_STATE = {
   userId: null,
   displayName: null,
   rooms: [],
+  currentRoomId: null,
 };
 
 export default (state = INTIAL_STATE, action) => {
@@ -31,6 +33,11 @@ export default (state = INTIAL_STATE, action) => {
         ...state,
         rooms: state.rooms.concat([action.payload])
       };
+    case GO_TO_ROOM:
+      return {
+        ...state,
+        currentRoomId: action.payload.roomId
+      } 
     default:
       return state;
   }
