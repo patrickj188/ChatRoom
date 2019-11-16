@@ -1,16 +1,28 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import db from '../../services/db.service';
 import { createRoom, goToRoom } from '../../actions';
 
 const SideContainer = styled.div`
-  width: 70px;
+  width: 10vw;
   height: 100vh;
   border: 1px solid black;
   position: absolute;
   top: 0;
   left: 0;
+`;
+
+const RoomIcon = styled.button`
+  width: 8vw;
+  height: 12vh;
+  background-color: salmon;
+  position: absolute;
+  margin: 5px;
+  text-align: center;
+  border-radius: 15%;
+  top: 10%;
 `;
 
 const SideBar = (props) => {
@@ -26,11 +38,12 @@ const SideBar = (props) => {
       }}>
         Create Room
       </button>
-      <ul>
+      <RoomIcon>
         {renderRoomNames}
-      </ul>
+      </RoomIcon>
     </SideContainer>
   )
+
 }
 
 const mapStateToProps = (state) => {
@@ -43,3 +56,6 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, { createRoom, goToRoom })(SideBar);
+
+
+

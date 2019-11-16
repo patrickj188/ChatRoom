@@ -118,7 +118,9 @@ class ChatRoom extends React.Component {
 
     const renderText = this.state.messages.map((x, i) => {
       return <Text key={i} className={this.isMyMessage(x) ? 'my-message' : ''}>
-        <span className="message-author">{x.user}</span>
+        <span className="message-author">{x.user}
+        <button type="drop-down">...</button>
+        </span>
         {x.message}
       </Text>;
     });
