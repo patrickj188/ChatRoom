@@ -1,9 +1,9 @@
 import React from 'react';
-import NavBar from "./Components/nav/NavBar";
-import Footer from './Components/footer/Footer';
+import NavBar from "../nav/NavBar";
+import Footer from '../footer/Footer';
 import styled from 'styled-components';
-import ChatRoom from './Components/ChatComponent/ChatRoom';
-import SideBar from "./Components/sideBar/SideBar";
+import ChatRoom from '../chatroom/ChatRoom';
+import SideBar from "../sideBar/SideBar";
 
 const footerHeight = '40px';
 const navHeight = '60px';

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from 'styled-components';
-import GoogleAuth from '../GoogleAuth';
+import GoogleAuth from '../googleauth/GoogleAuth';
 
 const NavBar = (props) => {
     const Wrapper = styled.header` 

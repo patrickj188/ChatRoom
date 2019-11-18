@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { signIn, signOut } from "../actions";
-import { firebase, googleAuthProvider as provider } from '../firebase';
-import db from '../services/db.service';
+import { signIn, signOut } from "../../actions";
+import { firebase, googleAuthProvider as provider } from '../../config/firebase';
+import db from '../../services/db.service';
 
 class GoogleAuth extends React.Component {
 

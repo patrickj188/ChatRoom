@@ -1,14 +1,8 @@
-import {
-  SIGN_IN,
-  SIGN_OUT,
-  CREATE_ROOM,
-  GO_TO_ROOM,
-} from './types';
-
+import * as TYPE from './types';
 
 export const signIn = (userId, displayName, isSignedIn, rooms) => {
   return {
-    type: SIGN_IN,
+    type: TYPE.SIGN_IN,
     payload: {
       userId,
       displayName,
@@ -20,26 +14,29 @@ export const signIn = (userId, displayName, isSignedIn, rooms) => {
 
 export const signOut = () => {
   return {
-    type: SIGN_OUT
+    type: TYPE.SIGN_OUT
   };
 };
 
-export const createRoom = (room) => {
+export const createRoom = (name, id) => {
   return {
-    type: CREATE_ROOM,
+    type: TYPE.CREATE_ROOM,
     payload: {
-      room_id: room.room_id, 
-      name: room.name,
+      name,
+      id,
     }
   }
 }
 
 export const goToRoom = (roomId) => {
-  console.log('go to room', roomId)
-  return {
-    type: GO_TO_ROOM,
-    payload: {
-      roomId
-    }
+  return async (dispatch, getState, { db }) => {
+    const { room, messages } = await db.getRoom(roomId);
+    dispatch({
+      type: TYPE.GO_TO_ROOM,
+      payload: {
+        room,
+        messages 
+      }
+    })
   }
 }

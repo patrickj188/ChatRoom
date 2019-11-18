@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import db from '../../services/db.service';
 import { connect } from 'react-redux';
 import { signIn } from "../../actions";
 
@@ -52,22 +51,8 @@ const NotSignedIn = styled.div`
 `;
 
 class ChatRoom extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      messages: [],
-      currentMessage: '',
-      room: {},
-    };
-  }
 
-  async componentDidMount () {
-    try {
-      await this.fetchData(this.scrollToBottom);
-      db.listenForMessages(this.onNewMessage);
-    } catch (err) {
-      console.error(err);
-    }
+  componentDidMount () {
 
   }
 
@@ -78,52 +63,55 @@ class ChatRoom extends React.Component {
     }
   }
 
+  fetchData = (roomId, callback = () => {}) => {
+    // db.getRoom(roomId).then(data => {
+    //   if (data) {
+    //     callback(data.messages);
 
-  fetchData = async (callback = () => {}) => {
-    try {
-      const { messages, room } = await db.getRoom(this.props.currentRoomId);
-      this.setState({ messages, room }, callback)
-    } catch (err) {
-      throw (err);
-    }
+    //   }
+    // }).catch(err => {
+    //   console.error(err);
+    // })
   }
 
   onNewMessage = (message) => {
-    if (!message) return;
-    this.setState({ messages: this.state.messages.concat([message]) }, this.scrollToBottom);
-
+    // if (!message) return;
+    // this.setState({ messages: this.state.messages.concat([message]) }, this.scrollToBottom);
   }
 
-  onSubmit = () => {
-    db.writeToCollection("messages", this.state.currentMessage, this.props.displayName, Date.now()).then(result => {
-
-    }).catch(err => {
-      console.error('whooops', err);
-    });
+  onSubmit = (text) => {
+    // db.writeToCollection("messages", this.state.currentMessage, this.props.displayName, Date.now()).then(result => {
+    // }).catch(err => {
+    //   console.error('whooops', err);
+    // });
   }
 
   isMyMessage (message) {
-    return message.user === this.props.displayName;
+    // return message.user === this.props.displayName;
   }
 
   onKeyUp = (event) => {
     if (event.key === 'Enter') {
-      this.onSubmit();
+      this.onSubmit(event.target.value.trim());
       return event.target.value = '';
     }
-    this.setState({ currentMessage: event.target.value });
   }
 
   render () {
+    const messages = this.props.room.messages || [];
 
-    const renderText = this.state.messages.map((x, i) => {
-      return <Text key={i} className={this.isMyMessage(x) ? 'my-message' : ''}>
-        <span className="message-author">{x.user}
-        <button type="drop-down">...</button>
-        </span>
-        {x.message}
-      </Text>;
-    });
+    console.log("props.room", this.props.room)
+
+    const renderText = () => {
+      return messages.map((x, i) => {
+        return <Text key={i} className={this.isMyMessage(x) ? 'my-message' : ''}>
+          <span className="message-author">{x.user || 'Cactus John'}
+          <button type="drop-down">...</button>
+          </span>
+          {x.text}
+        </Text>;
+      });
+    }
 
     if (this.props.isSignedIn !== true) {
       return (<div>
@@ -136,7 +124,7 @@ class ChatRoom extends React.Component {
         <div>
           <ChatRoomWrapper className="chatroom-wrapper" style={{ height: `calc(100vh - ${this.props.navHeight} - ${this.props.footerHeight})` }}>
             <ChatRoomTextDiv id={chatScrollContainerId} className="chatroom-text">
-              {renderText}
+              {renderText()}
             </ChatRoomTextDiv>
             <input placeholder="say something" onKeyUp={this.onKeyUp} />
           </ChatRoomWrapper>
@@ -148,12 +136,12 @@ class ChatRoom extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
+    isSignedIn: state.auth.isSignedIn,
     userId: state.auth.userId,
     displayName: state.auth.displayName,
-    isSignedIn: state.auth.isSignedIn,
-    currentRoomId: state.auth.currentRoomId,
+    currentRoomId: state.room.currentRoomId,
+    room: state.room,
   };
 };
 
 export default connect(mapStateToProps, { signIn })(ChatRoom);
-

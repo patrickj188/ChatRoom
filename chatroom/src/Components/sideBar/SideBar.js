@@ -1,8 +1,7 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { connect } from 'react-redux';
-import db from '../../services/db.service';
+import { useDispatch, useSelector } from 'react-redux';
 import { createRoom, goToRoom } from '../../actions';
 
 const SideContainer = styled.div`
@@ -26,15 +25,20 @@ const RoomIcon = styled.button`
 `;
 
 const SideBar = (props) => {
-  const renderRoomNames = props.rooms.map(x => {
-    return <li key={x.room_id} onClick={() => props.goToRoom(x.room_id)}>{x.name}</li>
+  const dispatch = useDispatch();
+  const allUserRooms = useSelector(state => state.room.allUserRooms) || [];
+  const renderRoomNames = allUserRooms.map(x => {
+    return (
+      <li key={x.room_id} onClick={() => dispatch(goToRoom(x.room_id))}>
+        {x.name}
+      </li>
+    )
   })
 
   return (
     <SideContainer>
       <button onClick={async () => {
-        const room = await db.createRoom('Test Room', props);
-        props.createRoom(room.data())
+        dispatch(createRoom({ name: 'New Room' }))
       }}>
         Create Room
       </button>
@@ -43,19 +47,6 @@ const SideBar = (props) => {
       </RoomIcon>
     </SideContainer>
   )
-
 }
 
-const mapStateToProps = (state) => {
-  return {
-    userId: state.auth.userId,
-    displayName:state.auth.displayName,
-    isSignedIn: state.auth.isSignedIn,
-    rooms: state.auth.rooms,
-  };
-};
-
-export default connect(mapStateToProps, { createRoom, goToRoom })(SideBar);
-
-
-
+export default SideBar;
